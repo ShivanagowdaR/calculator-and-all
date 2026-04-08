@@ -1,0 +1,123 @@
+public class Calculator {
+
+    public int add(int a, int b) {
+        return a + b;
+    }
+
+    public int subtract(int a, int b) {
+        return a - b;
+    }
+
+    public int multiply(int a, int b) {
+        return a * b;
+    }
+
+    public double divide(int a, int b) {
+        if (b == 0) {
+            throw new ArithmeticException("Cannot divide by zero");
+        }
+        return (double) a / b;
+    }
+
+    public int square(int a) {
+        return a * a;
+    }
+
+    public int max(int a, int b) {
+        return (a > b) ? a : b;
+    }
+}
+
+-----------------------------
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class CalculatorTest {
+
+    Calculator calc = new Calculator();
+
+    @Test
+    void testAdd() {
+        assertEquals(8, calc.add(5, 3));
+    }
+
+    @Test
+    void testSubtract() {
+        assertEquals(2, calc.subtract(5, 3));
+    }
+
+    @Test
+    void testMultiply() {
+        assertEquals(15, calc.multiply(5, 3));
+    }
+
+    @Test
+    void testDivide() {
+        assertEquals(2.0, calc.divide(6, 3), 0.0001); // safer for double
+    }
+
+    @Test
+    void testSquare() {
+        assertEquals(25, calc.square(5));
+    }
+
+    @Test
+    void testMax() {
+        assertEquals(9, calc.max(9, 4));
+    }
+
+    @Test
+    void testDivideByZero() {
+        Exception exception = assertThrows(
+            ArithmeticException.class,
+            () -> calc.divide(5, 0)
+        );
+
+        assertEquals("Cannot divide by zero", exception.getMessage());
+    }
+}
+
+-----------------------------
+
+javac -cp "lib/junit-platform-console-standalone-1.10.0.jar" -d bin src/*.java
+
+java -jar lib/junit-platform-console-standalone-1.10.0.jar execute --class-path bin --scan-class-path --details tree
+
+
+-----------------------------------
+
+<plugins>
+  <plugin>
+    <groupId>org.jacoco</groupId>
+    <artifactId>jacoco-maven-plugin</artifactId>
+    <version>0.8.11</version>
+
+    <executions>
+      <!-- Attach JaCoCo agent -->
+      <execution>
+        <goals>
+          <goal>prepare-agent</goal>
+        </goals>
+      </execution>
+
+      <!-- Generate report -->
+      <execution>
+        <id>report</id>
+        <phase>test</phase>
+        <goals>
+          <goal>report</goal>
+        </goals>
+      </execution>
+    </executions>
+  </plugin>
+</plugins>
+
+-----------------------------------
+
+
+docker build -t my-app .
+docker run my-app
+
+docker build -t my-app .
+docker run -p 5020:5020 my-app
